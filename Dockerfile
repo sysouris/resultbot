@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["python", "ResultBot.py"]
 
-EXPOSE 8080/tcp
+EXPOSE 8051/tcp
