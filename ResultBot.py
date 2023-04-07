@@ -70,15 +70,3 @@ conv_handler = ConversationHandler(
 )
 app.add_handler(conv_handler)
 app.run_polling()
-
-app = Application.builder().token("6009163802:AAHxItimxRZmeJCfi9VbO3IoTkvlKFoWWGc").build()
-conv_handler = ConversationHandler(
-    entry_points = [(CommandHandler("start", start))],
-    states = {
-        COUNTER: [CallbackQueryHandler(button)]
-    },
-    fallbacks=[],
-    per_user = False
-)
-app.add_handler(conv_handler)
-app.run_polling()
