@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, InputMediaPhoto
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes, ConversationHandler
 from resultmonitor import *
 from datetime import datetime
@@ -10,15 +10,19 @@ current_count = 0
 COUNTER, = range(1)
 ErrorMessage1 = 'Error in 1st stage button press'
 ErrorMessage2 = 'Error in 2nd stage button press'
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+TOKEN = f"6009163802:AAHxItimxRZmeJCfi9VbO3IoTkvlKFoWWGc"
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:   
     keyboard = [
         [InlineKeyboardButton("IIM-B Final Result Status", callback_data=getResultDeclaredStatus(link, holyword))],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
+    img = open('Statpic.png', 'rb')
+    stxt = "Click below to get the status"
+    chatID = update.effective_chat.id
+    await context.bot.send_photo(chat_id=chatID,photo=img, caption=stxt, reply_markup=reply_markup)
 
-    await update.message.reply_text("Click on the tab", reply_markup=reply_markup)
     return COUNTER
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -28,25 +32,44 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await query.answer()
         now = datetime.now()
         strnow = now.strftime(f"%B %d, %H:%M")
-        await query.edit_message_text(text=f"{query.data}"+" as of "+ strnow)
-        time.sleep(120)
+        bimg = open('Statpic.png', 'rb')
+        btext = f"{query.data}"+" as of "+ strnow
+        await query.edit_message_media(media=InputMediaPhoto(media=bimg))
+        await query.edit_message_caption(caption = btext)
+        #time.sleep(120)
     except:
-        requests.get("https://api.telegram.org/bot6009163802:AAHxItimxRZmeJCfi9VbO3IoTkvlKFoWWGc/sendMessage?chat_id=1862428631&text={}".format(ErrorMessage1))
-        await query.edit_message_text(text="Please start again: type /start")
+        requests.get(f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=1862428631&text={ErrorMessage1}")
+        await query.edit_message_caption(caption="Please start again: type /start")
         return ConversationHandler.END
+
     try:
         keyboard = [
             [InlineKeyboardButton("IIM-B Final Result Status", callback_data=getResultDeclaredStatus(link, holyword))],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(text=f"{query.data}"+" as of "+ strnow, reply_markup = reply_markup)
+        beimg = open('Statpic.png', 'rb')
+        btxt = f"{query.data}"+" as of "+ strnow
+        await query.edit_message_media(media=InputMediaPhoto(media=beimg))
+        await query.edit_message_caption(caption=btxt, reply_markup = reply_markup)
             
     except:
-        requests.get("https://api.telegram.org/bot6009163802:AAHxItimxRZmeJCfi9VbO3IoTkvlKFoWWGc/sendMessage?chat_id=1862428631&text={}".format(ErrorMessage2))
-        await query.edit_message_text(text="Please start again: type /start")
+        requests.get(f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=1862428631&text={ErrorMessage2}")
+        await query.edit_message_caption(caption="Please start again: type /start")
         return ConversationHandler.END
     
     return COUNTER
+
+app = Application.builder().token(TOKEN).build()
+conv_handler = ConversationHandler(
+    entry_points = [(CommandHandler("start", start))],
+    states = {
+        COUNTER: [CallbackQueryHandler(button)]
+    },
+    fallbacks=[],
+    per_user = False
+)
+app.add_handler(conv_handler)
+app.run_polling()
 
 app = Application.builder().token("6009163802:AAHxItimxRZmeJCfi9VbO3IoTkvlKFoWWGc").build()
 conv_handler = ConversationHandler(
