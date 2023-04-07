@@ -70,3 +70,5 @@ conv_handler = ConversationHandler(
 )
 app.add_handler(conv_handler)
 app.run_polling()
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
