@@ -36,7 +36,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         btext = f"{query.data}"+" as of "+ strnow
         await query.edit_message_media(media=InputMediaPhoto(media=bimg))
         await query.edit_message_caption(caption = btext)
-        #time.sleep(120)
+        time.sleep(120)
     except:
         requests.get(f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id=1862428631&text={ErrorMessage1}")
         await query.edit_message_caption(caption="Please start again: type /start")
