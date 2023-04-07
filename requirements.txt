@@ -3,3 +3,4 @@ bs4==0.0.1
 Python-telegram-bot==20.2
 requests==2.28.2
 selenium==4.8.3
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
